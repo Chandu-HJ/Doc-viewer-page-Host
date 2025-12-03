@@ -69,20 +69,6 @@ export namespace Components {
     }
     interface DocWorkspace {
     }
-    interface MyComponent {
-        /**
-          * The first name
-         */
-        "first": string;
-        /**
-          * The last name
-         */
-        "last": string;
-        /**
-          * The middle name
-         */
-        "middle": string;
-    }
 }
 export interface DocPageCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -125,17 +111,10 @@ declare global {
         prototype: HTMLDocWorkspaceElement;
         new (): HTMLDocWorkspaceElement;
     };
-    interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
-    }
-    var HTMLMyComponentElement: {
-        prototype: HTMLMyComponentElement;
-        new (): HTMLMyComponentElement;
-    };
     interface HTMLElementTagNameMap {
         "doc-page": HTMLDocPageElement;
         "doc-viewer": HTMLDocViewerElement;
         "doc-workspace": HTMLDocWorkspaceElement;
-        "my-component": HTMLMyComponentElement;
     }
 }
 declare namespace LocalJSX {
@@ -204,25 +183,10 @@ declare namespace LocalJSX {
     }
     interface DocWorkspace {
     }
-    interface MyComponent {
-        /**
-          * The first name
-         */
-        "first"?: string;
-        /**
-          * The last name
-         */
-        "last"?: string;
-        /**
-          * The middle name
-         */
-        "middle"?: string;
-    }
     interface IntrinsicElements {
         "doc-page": DocPage;
         "doc-viewer": DocViewer;
         "doc-workspace": DocWorkspace;
-        "my-component": MyComponent;
     }
 }
 export { LocalJSX as JSX };
@@ -232,7 +196,6 @@ declare module "@stencil/core" {
             "doc-page": LocalJSX.DocPage & JSXBase.HTMLAttributes<HTMLDocPageElement>;
             "doc-viewer": LocalJSX.DocViewer & JSXBase.HTMLAttributes<HTMLDocViewerElement>;
             "doc-workspace": LocalJSX.DocWorkspace & JSXBase.HTMLAttributes<HTMLDocWorkspaceElement>;
-            "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
         }
     }
 }

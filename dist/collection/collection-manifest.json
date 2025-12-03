@@ -2,8 +2,7 @@
   "entries": [
     "components/doc-viewer/doc-viewer.js",
     "components/doc-page/doc-page.js",
-    "components/doc-workspace/doc-workspace.js",
-    "components/my-component/my-component.js"
+    "components/doc-workspace/doc-workspace.js"
   ],
   "compiler": {
     "name": "@stencil/core",

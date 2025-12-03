@@ -237,26 +237,6 @@ var unwrapErr = (result) => {
     throw result.value;
   }
 };
-
-// src/utils/style.ts
-function createStyleSheetIfNeededAndSupported(styles2) {
-  return void 0;
-}
-
-// src/utils/shadow-root.ts
-var globalStyleSheet;
-function createShadowRoot(cmpMeta) {
-  var _a;
-  const shadowRoot = this.attachShadow({ mode: "open" });
-  if (globalStyleSheet === void 0) globalStyleSheet = (_a = createStyleSheetIfNeededAndSupported()) != null ? _a : null;
-  if (globalStyleSheet) {
-    if (supportsMutableAdoptedStyleSheets) {
-      shadowRoot.adoptedStyleSheets.push(globalStyleSheet);
-    } else {
-      shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, globalStyleSheet];
-    }
-  }
-}
 var createTime = (fnName, tagName = "") => {
   {
     return () => {
@@ -363,15 +343,10 @@ var addStyle = (styleContainerNode, cmpMeta, mode) => {
 var attachStyles = (hostRef) => {
   const cmpMeta = hostRef.$cmpMeta$;
   const elm = hostRef.$hostElement$;
-  const flags = cmpMeta.$flags$;
   const endAttachStyles = createTime("attachStyles", cmpMeta.$tagName$);
-  const scopeId2 = addStyle(
-    elm.shadowRoot ? elm.shadowRoot : elm.getRootNode(),
+  addStyle(
+    elm.getRootNode(),
     cmpMeta);
-  if (flags & 10 /* needsScopedEncapsulation */) {
-    elm["s-sc"] = scopeId2;
-    elm.classList.add(scopeId2 + "-h");
-  }
   endAttachStyles();
 };
 var getScopeId = (cmp, mode) => "sc-" + (cmp.$tagName$);
@@ -707,9 +682,6 @@ var createElm = (oldParentVNode, newParentVNode, childIndex) => {
 var addVnodes = (parentElm, before, parentVNode, vnodes, startIdx, endIdx) => {
   let containerElm = parentElm;
   let childNode;
-  if (containerElm.shadowRoot && containerElm.tagName === hostTagName) {
-    containerElm = containerElm.shadowRoot;
-  }
   for (; startIdx <= endIdx; ++startIdx) {
     if (vnodes[startIdx]) {
       childNode = createElm(null, parentVNode, startIdx);
@@ -890,7 +862,7 @@ var renderVdom = (hostRef, renderFnResults, isInitialLoad = false) => {
   rootVnode.$tag$ = null;
   rootVnode.$flags$ |= 4 /* isHost */;
   hostRef.$vnode$ = rootVnode;
-  rootVnode.$elm$ = oldVNode.$elm$ = hostElm.shadowRoot || hostElm ;
+  rootVnode.$elm$ = oldVNode.$elm$ = hostElm;
   patch(oldVNode, rootVnode, isInitialLoad);
 };
 
@@ -1446,19 +1418,6 @@ var bootstrapLazy = (lazyBundles, options = {}) => {
           this.hasRegisteredEventListeners = false;
           self = this;
           registerHost(self, cmpMeta);
-          if (cmpMeta.$flags$ & 1 /* shadowDomEncapsulation */) {
-            {
-              if (!self.shadowRoot) {
-                createShadowRoot.call(self, cmpMeta);
-              } else {
-                if (self.shadowRoot.mode !== "open") {
-                  throw new Error(
-                    `Unable to re-use existing shadow root for ${cmpMeta.$tagName$}! Mode is set to ${self.shadowRoot.mode} but Stencil only supports open shadow roots.`
-                  );
-                }
-              }
-            }
-          }
         }
         connectedCallback() {
           const hostRef = getHostRef(this);
@@ -1547,6 +1506,6 @@ exports.h = h;
 exports.promiseResolve = promiseResolve;
 exports.registerInstance = registerInstance;
 exports.setNonce = setNonce;
-//# sourceMappingURL=index-BjGe-IOm.js.map
+//# sourceMappingURL=index-CwZRCTZi.js.map
 
-//# sourceMappingURL=index-BjGe-IOm.js.map
+//# sourceMappingURL=index-CwZRCTZi.js.map

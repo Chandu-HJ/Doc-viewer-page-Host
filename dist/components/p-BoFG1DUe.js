@@ -1,5 +1,5 @@
 const NAMESPACE = 'my-pdf';
-const BUILD = /* my-pdf */ { hydratedSelectorName: "hydrated", lazyLoad: true, propChangeCallback: true, state: true, updatable: true};
+const BUILD = /* my-pdf */ { hydratedSelectorName: "hydrated", lazyLoad: false, state: true, updatable: true};
 
 /*
  Stencil Client Platform v4.38.3 | MIT Licensed | https://stenciljs.com
@@ -49,14 +49,6 @@ var getHostRef = (ref) => {
   }
   return void 0;
 };
-var registerInstance = (lazyInstance, hostRef) => {
-  if (!hostRef) return;
-  lazyInstance.__stencil__getHostRef = () => hostRef;
-  hostRef.$lazyInstance$ = lazyInstance;
-  if (hostRef.$cmpMeta$.$flags$ & 512 /* hasModernPropertyDecls */ && (BUILD.state)) {
-    reWireGetterSetter(lazyInstance, hostRef);
-  }
-};
 var registerHost = (hostElement, cmpMeta) => {
   const hostRef = {
     $flags$: 0,
@@ -70,53 +62,22 @@ var registerHost = (hostElement, cmpMeta) => {
     hostElement["s-p"] = [];
     hostElement["s-rc"] = [];
   }
-  {
-    hostRef.$fetchedCbList$ = [];
-  }
   const ref = hostRef;
   hostElement.__stencil__getHostRef = () => ref;
+  if (cmpMeta.$flags$ & 512 /* hasModernPropertyDecls */ && (BUILD.state)) {
+    reWireGetterSetter(hostElement, hostRef);
+  }
   return ref;
 };
 var isMemberInElement = (elm, memberName) => memberName in elm;
 var consoleError = (e, el) => (0, console.error)(e, el);
 
-// src/client/client-load-module.ts
-var cmpModules = /* @__PURE__ */ new Map();
-var loadModule = (cmpMeta, hostRef, hmrVersionId) => {
-  const exportName = cmpMeta.$tagName$.replace(/-/g, "_");
-  const bundleId = cmpMeta.$lazyBundleId$;
-  if (!bundleId) {
-    return void 0;
-  }
-  const module = cmpModules.get(bundleId) ;
-  if (module) {
-    return module[exportName];
-  }
-  /*!__STENCIL_STATIC_IMPORT_SWITCH__*/
-  return import(
-    /* @vite-ignore */
-    /* webpackInclude: /\.entry\.js$/ */
-    /* webpackExclude: /\.system\.entry\.js$/ */
-    /* webpackMode: "lazy" */
-    `./${bundleId}.entry.js${""}`
-  ).then(
-    (importedModule) => {
-      {
-        cmpModules.set(bundleId, importedModule);
-      }
-      return importedModule[exportName];
-    },
-    (e) => {
-      consoleError(e, hostRef.$hostElement$);
-    }
-  );
-};
-
 // src/client/client-style.ts
 var styles = /* @__PURE__ */ new Map();
-var HYDRATED_CSS = "{visibility:hidden}.hydrated{visibility:inherit}";
 var SLOT_FB_CSS = "slot-fb{display:contents}slot-fb[hidden]{display:none}";
 var win = typeof window !== "undefined" ? window : {};
+var H = win.HTMLElement || class {
+};
 var plt = {
   $flags$: 0,
   $resourcesUrl$: "",
@@ -171,6 +132,13 @@ var flush = () => {
 };
 var nextTick = (cb) => promiseResolve().then(cb);
 var writeTask = /* @__PURE__ */ queueTask(queueDomWrites, true);
+
+// src/runtime/asset-path.ts
+var getAssetPath = (path) => {
+  const assetUrl = new URL(path, plt.$resourcesUrl$);
+  return assetUrl.origin !== win.location.origin ? assetUrl.href : assetUrl.pathname;
+};
+var setAssetPath = (path) => plt.$resourcesUrl$ = path;
 var isComplexType = (o) => {
   o = typeof o;
   return o === "object" || o === "function";
@@ -235,34 +203,7 @@ var unwrapErr = (result) => {
     throw result.value;
   }
 };
-
-// src/utils/style.ts
-function createStyleSheetIfNeededAndSupported(styles2) {
-  return void 0;
-}
-
-// src/utils/shadow-root.ts
-var globalStyleSheet;
-function createShadowRoot(cmpMeta) {
-  var _a;
-  const shadowRoot = this.attachShadow({ mode: "open" });
-  if (globalStyleSheet === void 0) globalStyleSheet = (_a = createStyleSheetIfNeededAndSupported()) != null ? _a : null;
-  if (globalStyleSheet) {
-    if (supportsMutableAdoptedStyleSheets) {
-      shadowRoot.adoptedStyleSheets.push(globalStyleSheet);
-    } else {
-      shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, globalStyleSheet];
-    }
-  }
-}
 var createTime = (fnName, tagName = "") => {
-  {
-    return () => {
-      return;
-    };
-  }
-};
-var uniqueTime = (key, measureText) => {
   {
     return () => {
       return;
@@ -361,15 +302,10 @@ var addStyle = (styleContainerNode, cmpMeta, mode) => {
 var attachStyles = (hostRef) => {
   const cmpMeta = hostRef.$cmpMeta$;
   const elm = hostRef.$hostElement$;
-  const flags = cmpMeta.$flags$;
   const endAttachStyles = createTime("attachStyles", cmpMeta.$tagName$);
-  const scopeId2 = addStyle(
-    elm.shadowRoot ? elm.shadowRoot : elm.getRootNode(),
+  addStyle(
+    elm.getRootNode(),
     cmpMeta);
-  if (flags & 10 /* needsScopedEncapsulation */) {
-    elm["s-sc"] = scopeId2;
-    elm.classList.add(scopeId2 + "-h");
-  }
   endAttachStyles();
 };
 var getScopeId = (cmp, mode) => "sc-" + (cmp.$tagName$);
@@ -504,8 +440,7 @@ var parsePropertyValue = (propValue, propType, isFormAssociated) => {
   return propValue;
 };
 var getElement = (ref) => {
-  var _a;
-  return (_a = getHostRef(ref)) == null ? void 0 : _a.$hostElement$ ;
+  return ref;
 };
 
 // src/runtime/event-emitter.ts
@@ -566,7 +501,7 @@ var setAccessor = (elm, memberName, oldValue, newValue, isSvg, flags, initialRen
     if (newValue) {
       newValue(elm);
     }
-  } else if ((!isProp ) && memberName[0] === "o" && memberName[1] === "n") {
+  } else if ((!elm.__lookupSetter__(memberName)) && memberName[0] === "o" && memberName[1] === "n") {
     if (memberName[2] === "-") {
       memberName = memberName.slice(3);
     } else if (isMemberInElement(win, ln)) {
@@ -705,9 +640,6 @@ var createElm = (oldParentVNode, newParentVNode, childIndex) => {
 var addVnodes = (parentElm, before, parentVNode, vnodes, startIdx, endIdx) => {
   let containerElm = parentElm;
   let childNode;
-  if (containerElm.shadowRoot && containerElm.tagName === hostTagName) {
-    containerElm = containerElm.shadowRoot;
-  }
   for (; startIdx <= endIdx; ++startIdx) {
     if (vnodes[startIdx]) {
       childNode = createElm(null, parentVNode, startIdx);
@@ -888,7 +820,7 @@ var renderVdom = (hostRef, renderFnResults, isInitialLoad = false) => {
   rootVnode.$tag$ = null;
   rootVnode.$flags$ |= 4 /* isHost */;
   hostRef.$vnode$ = rootVnode;
-  rootVnode.$elm$ = oldVNode.$elm$ = hostElm.shadowRoot || hostElm ;
+  rootVnode.$elm$ = oldVNode.$elm$ = hostElm;
   patch(oldVNode, rootVnode, isInitialLoad);
 };
 
@@ -926,7 +858,7 @@ var scheduleUpdate = (hostRef, isInitialLoad) => {
 var dispatchHooks = (hostRef, isInitialLoad) => {
   const elm = hostRef.$hostElement$;
   const endSchedule = createTime("scheduleUpdate", hostRef.$cmpMeta$.$tagName$);
-  const instance = hostRef.$lazyInstance$ ;
+  const instance = elm;
   if (!instance) {
     throw new Error(
       `Can't render component <${elm.tagName.toLowerCase()} /> with invalid Stencil runtime! Make sure this imported component is compiled with a \`externalRuntime: true\` flag. For more information, please refer to https://stenciljs.com/docs/custom-elements#externalruntime`
@@ -934,11 +866,6 @@ var dispatchHooks = (hostRef, isInitialLoad) => {
   }
   let maybePromise;
   if (isInitialLoad) {
-    {
-      if (hostRef.$fetchedCbList$.length) {
-        hostRef.$fetchedCbList$.forEach((cb) => cb(elm));
-      }
-    }
     maybePromise = safeCall(instance, "componentWillLoad", void 0, elm);
   } else {
     maybePromise = safeCall(instance, "componentWillUpdate", void 0, elm);
@@ -1007,7 +934,7 @@ var postUpdateComponent = (hostRef) => {
   const tagName = hostRef.$cmpMeta$.$tagName$;
   const elm = hostRef.$hostElement$;
   const endPostUpdate = createTime("postUpdate", tagName);
-  const instance = hostRef.$lazyInstance$ ;
+  const instance = elm;
   const ancestorComponent = hostRef.$ancestorComponent$;
   safeCall(instance, "componentDidRender", void 0, elm);
   if (!(hostRef.$flags$ & 64 /* hasLoadedComponent */)) {
@@ -1063,23 +990,18 @@ var setValue = (ref, propName, newVal, cmpMeta) => {
   if (!hostRef) {
     return;
   }
-  if (!hostRef) {
-    throw new Error(
-      `Couldn't find host element for "${cmpMeta.$tagName$}" as it is unknown to this Stencil runtime. This usually happens when integrating a 3rd party Stencil component with another Stencil component or application. Please reach out to the maintainers of the 3rd party Stencil component or report this on the Stencil Discord server (https://chat.stenciljs.com) or comment on this similar [GitHub issue](https://github.com/stenciljs/core/issues/5457).`
-    );
-  }
-  const elm = hostRef.$hostElement$ ;
+  const elm = ref;
   const oldVal = hostRef.$instanceValues$.get(propName);
   const flags = hostRef.$flags$;
-  const instance = hostRef.$lazyInstance$ ;
+  const instance = elm;
   newVal = parsePropertyValue(
     newVal,
     cmpMeta.$members$[propName][0]);
   const areBothNaN = Number.isNaN(oldVal) && Number.isNaN(newVal);
   const didValueChange = newVal !== oldVal && !areBothNaN;
-  if ((!(flags & 8 /* isConstructingInstance */) || oldVal === void 0) && didValueChange) {
+  if (didValueChange) {
     hostRef.$instanceValues$.set(propName, newVal);
-    if (instance) {
+    {
       if (cmpMeta.$watchers$ && flags & 128 /* isWatchReady */) {
         const watchMethods = cmpMeta.$watchers$[propName];
         if (watchMethods) {
@@ -1108,7 +1030,7 @@ var setValue = (ref, propName, newVal, cmpMeta) => {
 var proxyComponent = (Cstr, cmpMeta, flags) => {
   var _a, _b;
   const prototype = Cstr.prototype;
-  if (cmpMeta.$members$ || BUILD.propChangeCallback) {
+  {
     {
       if (Cstr.watchers && !cmpMeta.$watchers$) {
         cmpMeta.$watchers$ = Cstr.watchers;
@@ -1122,21 +1044,15 @@ var proxyComponent = (Cstr, cmpMeta, flags) => {
     }
     const members = Object.entries((_a = cmpMeta.$members$) != null ? _a : {});
     members.map(([memberName, [memberFlags]]) => {
-      if ((memberFlags & 31 /* Prop */ || (flags & 2 /* proxyState */) && memberFlags & 32 /* State */)) {
+      if ((memberFlags & 31 /* Prop */ || memberFlags & 32 /* State */)) {
         const { get: origGetter, set: origSetter } = Object.getOwnPropertyDescriptor(prototype, memberName) || {};
         if (origGetter) cmpMeta.$members$[memberName][0] |= 2048 /* Getter */;
         if (origSetter) cmpMeta.$members$[memberName][0] |= 4096 /* Setter */;
-        if (flags & 1 /* isElementConstructor */ || !origGetter) {
+        {
           Object.defineProperty(prototype, memberName, {
             get() {
               {
-                if ((cmpMeta.$members$[memberName][0] & 2048 /* Getter */) === 0) {
-                  return getValue(this, memberName);
-                }
-                const ref = getHostRef(this);
-                const instance = ref ? ref.$lazyInstance$ : prototype;
-                if (!instance) return;
-                return instance[memberName];
+                return origGetter ? origGetter.apply(this) : getValue(this, memberName);
               }
             },
             configurable: true,
@@ -1164,57 +1080,29 @@ var proxyComponent = (Cstr, cmpMeta, flags) => {
               return;
             }
             {
-              if ((flags & 1 /* isElementConstructor */) === 0 || (cmpMeta.$members$[memberName][0] & 4096 /* Setter */) === 0) {
-                setValue(this, memberName, newValue, cmpMeta);
-                if (flags & 1 /* isElementConstructor */ && !ref.$lazyInstance$) {
-                  ref.$fetchedCbList$.push(() => {
-                    if (cmpMeta.$members$[memberName][0] & 4096 /* Setter */ && ref.$lazyInstance$[memberName] !== ref.$instanceValues$.get(memberName)) {
-                      ref.$lazyInstance$[memberName] = newValue;
-                    }
-                  });
-                }
-                return;
-              }
-              const setterSetVal = () => {
-                const currentValue = ref.$lazyInstance$[memberName];
-                if (!ref.$instanceValues$.get(memberName) && currentValue) {
-                  ref.$instanceValues$.set(memberName, currentValue);
-                }
-                ref.$lazyInstance$[memberName] = parsePropertyValue(
-                  newValue,
-                  memberFlags);
-                setValue(this, memberName, ref.$lazyInstance$[memberName], cmpMeta);
-              };
-              if (ref.$lazyInstance$) {
-                setterSetVal();
-              } else {
-                ref.$fetchedCbList$.push(() => {
-                  setterSetVal();
-                });
-              }
+              setValue(this, memberName, newValue, cmpMeta);
+              return;
             }
           }
         });
       }
     });
-    if ((flags & 1 /* isElementConstructor */)) {
+    {
       const attrNameToPropName = /* @__PURE__ */ new Map();
       prototype.attributeChangedCallback = function(attrName, oldValue, newValue) {
         plt.jmp(() => {
           var _a2;
           const propName = attrNameToPropName.get(attrName);
           const hostRef = getHostRef(this);
-          if (this.hasOwnProperty(propName) && BUILD.lazyLoad) {
-            newValue = this[propName];
-            delete this[propName];
-          }
+          if (this.hasOwnProperty(propName) && BUILD.lazyLoad) ;
           if (prototype.hasOwnProperty(propName) && typeof this[propName] === "number" && // cast type to number to avoid TS compiler issues
           this[propName] == newValue) {
             return;
           } else if (propName == null) {
             const flags2 = hostRef == null ? void 0 : hostRef.$flags$;
             if (hostRef && flags2 && !(flags2 & 8 /* isConstructingInstance */) && flags2 & 128 /* isWatchReady */ && newValue !== oldValue) {
-              const instance = hostRef.$lazyInstance$ ;
+              const elm = this;
+              const instance = elm;
               const entry = (_a2 = cmpMeta.$watchers$) == null ? void 0 : _a2[attrName];
               entry == null ? void 0 : entry.forEach((callbackName) => {
                 if (instance[callbackName] != null) {
@@ -1258,46 +1146,7 @@ var initializeComponent = async (elm, hostRef, cmpMeta, hmrVersionId) => {
   let Cstr;
   if ((hostRef.$flags$ & 32 /* hasInitializedComponent */) === 0) {
     hostRef.$flags$ |= 32 /* hasInitializedComponent */;
-    const bundleId = cmpMeta.$lazyBundleId$;
-    if (bundleId) {
-      const CstrImport = loadModule(cmpMeta, hostRef);
-      if (CstrImport && "then" in CstrImport) {
-        const endLoad = uniqueTime();
-        Cstr = await CstrImport;
-        endLoad();
-      } else {
-        Cstr = CstrImport;
-      }
-      if (!Cstr) {
-        throw new Error(`Constructor for "${cmpMeta.$tagName$}#${hostRef.$modeName$}" was not found`);
-      }
-      if (!Cstr.isProxied) {
-        {
-          cmpMeta.$watchers$ = Cstr.watchers;
-          cmpMeta.$serializers$ = Cstr.serializers;
-          cmpMeta.$deserializers$ = Cstr.deserializers;
-        }
-        proxyComponent(Cstr, cmpMeta, 2 /* proxyState */);
-        Cstr.isProxied = true;
-      }
-      const endNewInstance = createTime("createInstance", cmpMeta.$tagName$);
-      {
-        hostRef.$flags$ |= 8 /* isConstructingInstance */;
-      }
-      try {
-        new Cstr(hostRef);
-      } catch (e) {
-        consoleError(e, elm);
-      }
-      {
-        hostRef.$flags$ &= -9 /* isConstructingInstance */;
-      }
-      {
-        hostRef.$flags$ |= 128 /* isWatchReady */;
-      }
-      endNewInstance();
-      fireConnectedCallback(hostRef.$lazyInstance$, elm);
-    } else {
+    {
       Cstr = elm.constructor;
       const cmpTag = elm.localName;
       customElements.whenDefined(cmpTag).then(() => hostRef.$flags$ |= 128 /* isWatchReady */);
@@ -1324,9 +1173,6 @@ var initializeComponent = async (elm, hostRef, cmpMeta, hmrVersionId) => {
   }
 };
 var fireConnectedCallback = (instance, elm) => {
-  {
-    safeCall(instance, "connectedCallback", void 0, elm);
-  }
 };
 
 // src/runtime/connected-callback.ts
@@ -1362,28 +1208,16 @@ var connectedCallback = (elm) => {
         initializeComponent(elm, hostRef, cmpMeta);
       }
     } else {
-      if (hostRef == null ? void 0 : hostRef.$lazyInstance$) {
-        fireConnectedCallback(hostRef.$lazyInstance$, elm);
-      } else if (hostRef == null ? void 0 : hostRef.$onReadyPromise$) {
-        hostRef.$onReadyPromise$.then(() => fireConnectedCallback(hostRef.$lazyInstance$, elm));
+      if (hostRef == null ? void 0 : hostRef.$lazyInstance$) ; else if (hostRef == null ? void 0 : hostRef.$onReadyPromise$) {
+        hostRef.$onReadyPromise$.then(() => fireConnectedCallback());
       }
     }
     endConnected();
   }
 };
-var disconnectInstance = (instance, elm) => {
-  {
-    safeCall(instance, "disconnectedCallback", void 0, elm || instance);
-  }
-};
 var disconnectedCallback = async (elm) => {
   if ((plt.$flags$ & 1 /* isTmpDisconnected */) === 0) {
-    const hostRef = getHostRef(elm);
-    if (hostRef == null ? void 0 : hostRef.$lazyInstance$) {
-      disconnectInstance(hostRef.$lazyInstance$, elm);
-    } else if (hostRef == null ? void 0 : hostRef.$onReadyPromise$) {
-      hostRef.$onReadyPromise$.then(() => disconnectInstance(hostRef.$lazyInstance$, elm));
-    }
+    getHostRef(elm);
   }
   if (rootAppliedStyles.has(elm)) {
     rootAppliedStyles.delete(elm);
@@ -1392,153 +1226,78 @@ var disconnectedCallback = async (elm) => {
     rootAppliedStyles.delete(elm.shadowRoot);
   }
 };
-
-// src/runtime/bootstrap-lazy.ts
-var bootstrapLazy = (lazyBundles, options = {}) => {
-  var _a;
-  if (!win.document) {
-    console.warn("Stencil: No document found. Skipping bootstrapping lazy components.");
-    return;
+var proxyCustomElement = (Cstr, compactMeta) => {
+  const cmpMeta = {
+    $flags$: compactMeta[0],
+    $tagName$: compactMeta[1]
+  };
+  {
+    cmpMeta.$members$ = compactMeta[2];
   }
-  const endBootstrap = createTime();
-  const cmpTags = [];
-  const exclude = options.exclude || [];
-  const customElements2 = win.customElements;
-  const head = win.document.head;
-  const metaCharset = /* @__PURE__ */ head.querySelector("meta[charset]");
-  const dataStyles = /* @__PURE__ */ win.document.createElement("style");
-  const deferredConnectedCallbacks = [];
-  let appLoadFallback;
-  let isBootstrapping = true;
-  Object.assign(plt, options);
-  plt.$resourcesUrl$ = new URL(options.resourcesUrl || "./", win.document.baseURI).href;
-  let hasSlotRelocation = false;
-  lazyBundles.map((lazyBundle) => {
-    lazyBundle[1].map((compactMeta) => {
-      var _a2, _b, _c;
-      const cmpMeta = {
-        $flags$: compactMeta[0],
-        $tagName$: compactMeta[1],
-        $members$: compactMeta[2],
-        $listeners$: compactMeta[3]
-      };
-      if (cmpMeta.$flags$ & 4 /* hasSlotRelocation */) {
-        hasSlotRelocation = true;
+  {
+    cmpMeta.$watchers$ = Cstr.$watchers$;
+    cmpMeta.$deserializers$ = Cstr.$deserializers$;
+    cmpMeta.$serializers$ = Cstr.$serializers$;
+  }
+  {
+    cmpMeta.$attrsToReflect$ = [];
+  }
+  const originalConnectedCallback = Cstr.prototype.connectedCallback;
+  const originalDisconnectedCallback = Cstr.prototype.disconnectedCallback;
+  Object.assign(Cstr.prototype, {
+    __hasHostListenerAttached: false,
+    __registerHost() {
+      registerHost(this, cmpMeta);
+    },
+    connectedCallback() {
+      if (!this.__hasHostListenerAttached) {
+        const hostRef = getHostRef(this);
+        if (!hostRef) {
+          return;
+        }
+        this.__hasHostListenerAttached = true;
       }
+      connectedCallback(this);
+      if (originalConnectedCallback) {
+        originalConnectedCallback.call(this);
+      }
+    },
+    disconnectedCallback() {
+      disconnectedCallback(this);
+      if (originalDisconnectedCallback) {
+        originalDisconnectedCallback.call(this);
+      }
+    },
+    __attachShadow() {
       {
-        cmpMeta.$members$ = compactMeta[2];
+        this.shadowRoot = this;
       }
-      {
-        cmpMeta.$attrsToReflect$ = [];
-      }
-      {
-        cmpMeta.$watchers$ = (_a2 = compactMeta[4]) != null ? _a2 : {};
-        cmpMeta.$serializers$ = (_b = compactMeta[5]) != null ? _b : {};
-        cmpMeta.$deserializers$ = (_c = compactMeta[6]) != null ? _c : {};
-      }
-      const tagName = cmpMeta.$tagName$;
-      const HostElement = class extends HTMLElement {
-        // StencilLazyHost
-        constructor(self) {
-          super(self);
-          this.hasRegisteredEventListeners = false;
-          self = this;
-          registerHost(self, cmpMeta);
-          if (cmpMeta.$flags$ & 1 /* shadowDomEncapsulation */) {
-            {
-              if (!self.shadowRoot) {
-                createShadowRoot.call(self, cmpMeta);
-              } else {
-                if (self.shadowRoot.mode !== "open") {
-                  throw new Error(
-                    `Unable to re-use existing shadow root for ${cmpMeta.$tagName$}! Mode is set to ${self.shadowRoot.mode} but Stencil only supports open shadow roots.`
-                  );
-                }
-              }
-            }
-          }
-        }
-        connectedCallback() {
-          const hostRef = getHostRef(this);
-          if (!hostRef) {
-            return;
-          }
-          if (!this.hasRegisteredEventListeners) {
-            this.hasRegisteredEventListeners = true;
-          }
-          if (appLoadFallback) {
-            clearTimeout(appLoadFallback);
-            appLoadFallback = null;
-          }
-          if (isBootstrapping) {
-            deferredConnectedCallbacks.push(this);
-          } else {
-            plt.jmp(() => connectedCallback(this));
-          }
-        }
-        disconnectedCallback() {
-          plt.jmp(() => disconnectedCallback(this));
-          plt.raf(() => {
-            var _a3;
-            const hostRef = getHostRef(this);
-            if (!hostRef) {
-              return;
-            }
-            const i2 = deferredConnectedCallbacks.findIndex((host) => host === this);
-            if (i2 > -1) {
-              deferredConnectedCallbacks.splice(i2, 1);
-            }
-            if (((_a3 = hostRef == null ? void 0 : hostRef.$vnode$) == null ? void 0 : _a3.$elm$) instanceof Node && !hostRef.$vnode$.$elm$.isConnected) {
-              delete hostRef.$vnode$.$elm$;
-            }
-          });
-        }
-        componentOnReady() {
-          var _a3;
-          return (_a3 = getHostRef(this)) == null ? void 0 : _a3.$onReadyPromise$;
-        }
-      };
-      cmpMeta.$lazyBundleId$ = lazyBundle[0];
-      if (!exclude.includes(tagName) && !customElements2.get(tagName)) {
-        cmpTags.push(tagName);
-        customElements2.define(
-          tagName,
-          proxyComponent(HostElement, cmpMeta, 1 /* isElementConstructor */)
-        );
-      }
-    });
+    }
   });
-  if (cmpTags.length > 0) {
-    if (hasSlotRelocation) {
-      dataStyles.textContent += SLOT_FB_CSS;
-    }
-    {
-      dataStyles.textContent += cmpTags.sort() + HYDRATED_CSS;
-    }
-    if (dataStyles.innerHTML.length) {
-      dataStyles.setAttribute("data-styles", "");
-      const nonce = (_a = plt.$nonce$) != null ? _a : queryNonceMetaTagContent(win.document);
-      if (nonce != null) {
-        dataStyles.setAttribute("nonce", nonce);
-      }
-      head.insertBefore(dataStyles, metaCharset ? metaCharset.nextSibling : head.firstChild);
-    }
-  }
-  isBootstrapping = false;
-  if (deferredConnectedCallbacks.length) {
-    deferredConnectedCallbacks.map((host) => host.connectedCallback());
-  } else {
-    {
-      plt.jmp(() => appLoadFallback = setTimeout(appDidLoad, 30));
-    }
-  }
-  endBootstrap();
+  Cstr.is = cmpMeta.$tagName$;
+  return proxyComponent(Cstr, cmpMeta);
 };
 
 // src/runtime/nonce.ts
 var setNonce = (nonce) => plt.$nonce$ = nonce;
 
-export { bootstrapLazy as b, createEvent as c, getElement as g, h, promiseResolve as p, registerInstance as r, setNonce as s };
-//# sourceMappingURL=index-Cfibe-oe.js.map
+// src/runtime/platform-options.ts
+var setPlatformOptions = (opts) => Object.assign(plt, opts);
 
-//# sourceMappingURL=index-Cfibe-oe.js.map
+// src/runtime/render.ts
+function render(vnode, container) {
+  const cmpMeta = {
+    $flags$: 0,
+    $tagName$: container.tagName
+  };
+  const ref = {
+    $cmpMeta$: cmpMeta,
+    $hostElement$: container
+  };
+  renderVdom(ref, vnode);
+}
+
+export { H, setNonce as a, setPlatformOptions as b, createEvent as c, getAssetPath as g, h, proxyCustomElement as p, render as r, setAssetPath as s };
+//# sourceMappingURL=p-BoFG1DUe.js.map
+
+//# sourceMappingURL=p-BoFG1DUe.js.map

@@ -1,4 +1,4 @@
-import { D as DocPage$1, d as defineCustomElement$1 } from './p-MlUxFQlp.js';
+import { D as DocPage$1, d as defineCustomElement$1 } from './p-zxZMLVxm.js';
 
 const DocPage = DocPage$1;
 const defineCustomElement = defineCustomElement$1;

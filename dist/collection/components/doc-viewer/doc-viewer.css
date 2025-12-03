@@ -291,3 +291,44 @@
   transition: margin-right 0.25s ease;
 }
 
+/* =======================================
+   DARK THEME FIX FOR COMMENT SIDEBAR
+======================================= */
+
+.theme-dark .comment-sidebar,
+.theme-dark .comment-item,
+.theme-dark .comment-editor,
+.theme-dark .comment-list,
+.theme-dark .sidebar-header {
+  color: #e9ecff !important;         /* light text */
+}
+
+.theme-dark .comment-item .comment-text-preview,
+.theme-dark .comment-item .comment-meta,
+.theme-dark .comment-item .meta-time,
+.theme-dark .comment-meta.tag-line {
+  color: #d7dbff !important;         /* lighter text */
+}
+
+.theme-dark .comment-item.selected {
+  background: rgba(40, 50, 90, 0.7) !important;
+  border-color: #8fa7ff !important;
+}
+
+/* textarea + select in dark theme */
+.theme-dark .comment-editor textarea,
+.theme-dark .comment-editor select {
+  background: rgba(20, 25, 50, 0.8) !important;
+  color: #031962 !important;
+  border-color: rgba(120, 145, 220, 0.7) !important;
+}
+
+/* buttons look readable in dark */
+.theme-dark .comment-editor button {
+  color: #230372 !important;
+}
+
+/* Scrollable area text fix */
+.theme-dark .comment-list {
+  color: #0f1645 !important;
+}
