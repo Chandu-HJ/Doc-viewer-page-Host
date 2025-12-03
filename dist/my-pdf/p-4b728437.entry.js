@@ -1,0 +1,2 @@
+import{r as t,h as s}from"./p-Cfibe-oe.js";import{format as e}from"./index.esm.js";const o=":host{display:block}";const r=class{constructor(s){t(this,s)}first;middle;last;getText(){return e(this.first,this.middle,this.last)}render(){return s("div",{key:"ff454724b0810130162b6e4f8f8563f4e63d1419"},"Hello, World! I'm ",this.getText())}};r.style=o;export{r as my_component};
+//# sourceMappingURL=p-4b728437.entry.js.map
