@@ -319,7 +319,7 @@
 .theme-dark .comment-editor textarea,
 .theme-dark .comment-editor select {
   background: rgba(20, 25, 50, 0.8) !important;
-  color: #e9edf8 !important;
+  color: #f0f2fc !important;
   border-color: rgba(120, 145, 220, 0.7) !important;
 }
 
