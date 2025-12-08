@@ -1,0 +1,1 @@
+{"version":3,"file":"annotations.js","sourceRoot":"","sources":["../../src/types/annotations.ts"],"names":[],"mappings":"","sourcesContent":["// src/types/annotations.ts\r\nexport type NormalizedRect = {\r\n  x: number;\r\n  y: number;\r\n  width: number;\r\n  height: number;\r\n};\r\nexport type FileType = 'pdf' | 'image' | 'text';\r\n"]}

@@ -1,0 +1,14 @@
+{
+  "entries": [
+    "components/doc-viewer/doc-viewer.js",
+    "components/doc-page/doc-page.js",
+    "components/doc-workspace/doc-workspace.js"
+  ],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "4.38.3",
+    "typescriptVersion": "5.9.3"
+  },
+  "collections": [],
+  "bundles": []
+}

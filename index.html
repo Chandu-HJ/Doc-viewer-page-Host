@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doc Workspace Demo</title>
+
+  <!-- Load PDF.js (must use RELATIVE paths on GitHub Pages) -->
+  <link rel="stylesheet" href="./assets/pdf_viewer.css">
+  <script src="./assets/pdf.js"></script>
+  <script src="./assets/pdf.worker.js"></script>
+  <script src="./assets/pdf_viewer.js"></script>
+
+  <!-- Load Stencil Components (dist build) -->
+  <script type="module" src="./dist/my-pdf/my-pdf.esm.js"></script>
+  <script nomodule src="./dist/my-pdf/my-pdf.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: #f4f6fc;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Your root component -->
+   <h1></h1>
+  <doc-workspace></doc-workspace>
+
+</body>
+</html>
